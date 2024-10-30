@@ -135,21 +135,21 @@ st.markdown("<div class='summary-section'>", unsafe_allow_html=True)
 st.markdown("<h2 class='summary-header'>📊 Today's Sales Summary</h2>", unsafe_allow_html=True)
     
     # Display sales summary
-    summary = st.session_state.sales_data.groupby("Item").agg({"Count": "sum", "Total Price": "sum"}).reset_index()
+summary = st.session_state.sales_data.groupby("Item").agg({"Count": "sum", "Total Price": "sum"}).reset_index()
 
     
-    st.table(summary)
+st.table(summary)
     
     # Plotting sales data
-    plt.figure(figsize=(10,5))
-    plt.bar(summary["Item"], summary["Total Price"], color="#ff7b54")
-    plt.xlabel('Items')
-    plt.ylabel('Total Price (₹)')
-    plt.title('Sales Summary')
-    plt.xticks(rotation=45)
-    st.pyplot(plt)
+plt.figure(figsize=(10,5))
+plt.bar(summary["Item"], summary["Total Price"], color="#ff7b54")
+plt.xlabel('Items')
+plt.ylabel('Total Price (₹)')
+plt.title('Sales Summary')
+plt.xticks(rotation=45)
+st.pyplot(plt)
     
-    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # Download sales data button
 if st.button("Download Sales Data"):

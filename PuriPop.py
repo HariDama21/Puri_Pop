@@ -21,8 +21,8 @@ st.markdown(
         /* Title Styling */
         .title-container {
             background-color: #ffcc66;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 15;
+            padding: 20;
             text-align: center;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         }

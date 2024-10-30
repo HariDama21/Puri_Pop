@@ -131,10 +131,8 @@ if st.button("Submit Bill"):
     st.success("Bill submitted successfully!", icon="✅")
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Sales Summary Section
-if st.checkbox("Show Sales Summary"):
-    st.markdown("<div class='summary-section'>", unsafe_allow_html=True)
-    st.markdown("<h2 class='summary-header'>📊 Today's Sales Summary</h2>", unsafe_allow_html=True)
+st.markdown("<div class='summary-section'>", unsafe_allow_html=True)
+st.markdown("<h2 class='summary-header'>📊 Today's Sales Summary</h2>", unsafe_allow_html=True)
     
     # Display sales summary
     summary = st.session_state.sales_data.groupby("Item").agg({"Count": "sum", "Total Price": "sum"}).reset_index()

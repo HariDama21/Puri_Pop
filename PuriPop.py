@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Configure the app page settings
-st.set_page_config(page_title="Ganapathi's Kitchen Room", page_icon="🍲", layout="centered")
+st.set_page_config(page_title="Puri Pop", page_icon="🍲", layout="centered")
 
 # Define CSS for styling the app
 st.markdown("""
@@ -106,7 +106,7 @@ if "sales_data" not in st.session_state:
     st.session_state.sales_data = pd.DataFrame(columns=["Item", "Count", "Total Price"])
 
 # Title and subtitle
-st.markdown("<div class='title-container'><h1 class='title'>Surya's Pani Puri Shop 🍲</h1><p class='subtitle'>Fast, Easy, Delicious Billing</p></div>", unsafe_allow_html=True)
+st.markdown("<div class='title-container'><h1 class='title'>Ganapathi's Kitchen Room 🍲</h1><p class='subtitle'>Fast, Easy, Delicious Billing</p></div>", unsafe_allow_html=True)
 
 # Order Entry Section
 st.markdown("<div class='order-section'>", unsafe_allow_html=True)

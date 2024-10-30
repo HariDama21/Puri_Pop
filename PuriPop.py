@@ -138,13 +138,7 @@ if st.checkbox("Show Sales Summary"):
     
     # Display sales summary
     summary = st.session_state.sales_data.groupby("Item").agg({"Count": "sum", "Total Price": "sum"}).reset_index()
-    
-    # Allow deletion of bills
-    if st.button("Delete Selected Bills"):
-        selected_items = st.multiselect("Select items to delete:", summary["Item"].tolist())
-        if selected_items:
-            st.session_state.sales_data = st.session_state.sales_data[~st.session_state.sales_data["Item"].isin(selected_items)]
-            st.success("Selected bills deleted successfully!", icon="🗑️")
+
     
     st.table(summary)
     

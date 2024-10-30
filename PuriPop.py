@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Puri Pop", page_icon="🍲", layout="centered")
 
 # Define CSS for styling the app
-st.markdown(
+st.markdown("""
     <style>
         /* General Styling */
         body {
@@ -15,14 +15,14 @@ st.markdown(
             color: #333333;
         }
         .main {
-            padding: rem;
+            padding: 1rem;
         }
         
         /* Title Styling */
         .title-container {
             background-color: #ffcc66;
-            border-radius: 15;
-            padding: 20;
+            border-radius: 15px;
+            padding: 20px;
             text-align: center;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         }
@@ -82,7 +82,7 @@ st.markdown(
             padding: 10px 20px;
         }
     </style>
-, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # Item prices
 item_prices = {
@@ -96,8 +96,7 @@ item_prices = {
 
 # Initialize sales data storage
 if "sales_data" not in st.session_state:
-    st.session_state.sales_data = pd.DataFrame(columns=["ID", "Item", "Count", "Total Price"])
-    st.session_state.bill_id = 1
+    st.session_state.sales_data = pd.DataFrame(columns=["Item", "Count", "Total Price"])
 
 # Title and subtitle
 st.markdown("<div class='title-container'><h1 class='title'>Ganapathi's Kitchen Room 🍲</h1><p class='subtitle'>Fast, Easy, Delicious Billing</p></div>", unsafe_allow_html=True)
@@ -120,13 +119,10 @@ if st.button("Submit Bill"):
     for item, count in item_counts.items():
         if count > 0:
             total_item_price = count * item_prices[item]
-            new_entry = {"ID": st.session_state.bill_id, "Item": item, "Count": count, "Total Price": total_item_price}
+            new_entry = {"Item": item, "Count": count, "Total Price": total_item_price}
             st.session_state.sales_data = pd.concat(
                 [st.session_state.sales_data, pd.DataFrame([new_entry])]
             ).reset_index(drop=True)
-    
-    # Increment bill ID for the next entry
-    st.session_state.bill_id += 1
     
     # Reset input fields by clearing the session state for counts
     for item in item_counts.keys():
@@ -143,12 +139,11 @@ if st.checkbox("Show Sales Summary"):
     # Display sales summary
     summary = st.session_state.sales_data.groupby("Item").agg({"Count": "sum", "Total Price": "sum"}).reset_index()
     
-    # Allow deletion of specific bills based on ID
-    if not st.session_state.sales_data.empty:
-        selected_ids = st.multiselect("Select bills to delete by ID:", st.session_state.sales_data["ID"].tolist())
-        
-        if selected_ids:
-            st.session_state.sales_data = st.session_state.sales_data[~st.session_state.sales_data["ID"].isin(selected_ids)]
+    # Allow deletion of bills
+    if st.button("Delete Selected Bills"):
+        selected_items = st.multiselect("Select items to delete:", summary["Item"].tolist())
+        if selected_items:
+            st.session_state.sales_data = st.session_state.sales_data[~st.session_state.sales_data["Item"].isin(selected_items)]
             st.success("Selected bills deleted successfully!", icon="🗑️")
     
     st.table(summary)

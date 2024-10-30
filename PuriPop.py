@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Configure the app page settings
 st.set_page_config(page_title="Puri Pop", page_icon="🍲", layout="centered")
@@ -80,14 +81,6 @@ st.markdown("""
             border-radius: 8px;
             padding: 10px 20px;
         }
-        .stDownloadButton > button {
-            background-color: #333333;
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            padding: 10px 20px;
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -130,6 +123,11 @@ if st.button("Submit Bill"):
             st.session_state.sales_data = pd.concat(
                 [st.session_state.sales_data, pd.DataFrame([new_entry])]
             ).reset_index(drop=True)
+    
+    # Reset input fields by clearing the session state for counts
+    for item in item_counts.keys():
+        item_counts[item] = 0
+    
     st.success("Bill submitted successfully!", icon="✅")
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -140,7 +138,25 @@ if st.checkbox("Show Sales Summary"):
     
     # Display sales summary
     summary = st.session_state.sales_data.groupby("Item").agg({"Count": "sum", "Total Price": "sum"}).reset_index()
+    
+    # Allow deletion of bills
+    if st.button("Delete Selected Bills"):
+        selected_items = st.multiselect("Select items to delete:", summary["Item"].tolist())
+        if selected_items:
+            st.session_state.sales_data = st.session_state.sales_data[~st.session_state.sales_data["Item"].isin(selected_items)]
+            st.success("Selected bills deleted successfully!", icon="🗑️")
+    
     st.table(summary)
+    
+    # Plotting sales data
+    plt.figure(figsize=(10,5))
+    plt.bar(summary["Item"], summary["Total Price"], color="#ff7b54")
+    plt.xlabel('Items')
+    plt.ylabel('Total Price (₹)')
+    plt.title('Sales Summary')
+    plt.xticks(rotation=45)
+    st.pyplot(plt)
+    
     st.markdown("</div>", unsafe_allow_html=True)
 
 # Download sales data button

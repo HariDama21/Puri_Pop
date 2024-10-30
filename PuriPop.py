@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Puri Pop", page_icon="🍲", layout="centered")
 
 # Define CSS for styling the app
-st.markdown("""
+st.markdown(
     <style>
         /* General Styling */
         body {
@@ -78,3 +78,93 @@ st.markdown("""
             color: #ffffff;
             font-size: 1rem;
             font-weight: bold;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+    </style>
+, unsafe_allow_html=True)
+
+# Item prices
+item_prices = {
+    "Pani Puri": 20,
+    "Masala Puri": 25,
+    "Dahi Puri": 30,
+    "Sev Puri": 30,
+    "Chicken Puri": 50,
+    "Lays Puri": 50
+}
+
+# Initialize sales data storage
+if "sales_data" not in st.session_state:
+    st.session_state.sales_data = pd.DataFrame(columns=["ID", "Item", "Count", "Total Price"])
+    st.session_state.bill_id = 1
+
+# Title and subtitle
+st.markdown("<div class='title-container'><h1 class='title'>Ganapathi's Kitchen Room 🍲</h1><p class='subtitle'>Fast, Easy, Delicious Billing</p></div>", unsafe_allow_html=True)
+
+# Order Entry Section
+st.markdown("<div class='order-section'>", unsafe_allow_html=True)
+st.markdown("<h2 class='order-header'>🛒 Order Details</h2>", unsafe_allow_html=True)
+
+# Input fields for each item
+item_counts = {}
+for item, price in item_prices.items():
+    item_counts[item] = st.number_input(f"{item} (₹{price} each)", min_value=0, step=1)
+
+# Calculate total price
+total_price = sum(count * item_prices[item] for item, count in item_counts.items())
+st.markdown(f"<p class='total-price'>Total Price: ₹{total_price}</p>", unsafe_allow_html=True)
+
+# Submit bill button
+if st.button("Submit Bill"):
+    for item, count in item_counts.items():
+        if count > 0:
+            total_item_price = count * item_prices[item]
+            new_entry = {"ID": st.session_state.bill_id, "Item": item, "Count": count, "Total Price": total_item_price}
+            st.session_state.sales_data = pd.concat(
+                [st.session_state.sales_data, pd.DataFrame([new_entry])]
+            ).reset_index(drop=True)
+    
+    # Increment bill ID for the next entry
+    st.session_state.bill_id += 1
+    
+    # Reset input fields by clearing the session state for counts
+    for item in item_counts.keys():
+        item_counts[item] = 0
+    
+    st.success("Bill submitted successfully!", icon="✅")
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Sales Summary Section
+if st.checkbox("Show Sales Summary"):
+    st.markdown("<div class='summary-section'>", unsafe_allow_html=True)
+    st.markdown("<h2 class='summary-header'>📊 Today's Sales Summary</h2>", unsafe_allow_html=True)
+    
+    # Display sales summary
+    summary = st.session_state.sales_data.groupby("Item").agg({"Count": "sum", "Total Price": "sum"}).reset_index()
+    
+    # Allow deletion of specific bills based on ID
+    if not st.session_state.sales_data.empty:
+        selected_ids = st.multiselect("Select bills to delete by ID:", st.session_state.sales_data["ID"].tolist())
+        
+        if selected_ids:
+            st.session_state.sales_data = st.session_state.sales_data[~st.session_state.sales_data["ID"].isin(selected_ids)]
+            st.success("Selected bills deleted successfully!", icon="🗑️")
+    
+    st.table(summary)
+    
+    # Plotting sales data
+    plt.figure(figsize=(10,5))
+    plt.bar(summary["Item"], summary["Total Price"], color="#ff7b54")
+    plt.xlabel('Items')
+    plt.ylabel('Total Price (₹)')
+    plt.title('Sales Summary')
+    plt.xticks(rotation=45)
+    st.pyplot(plt)
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Download sales data button
+if st.button("Download Sales Data"):
+    sales_csv = st.session_state.sales_data.to_csv(index=False).encode("utf-8")
+    st.download_button("Download CSV", data=sales_csv, file_name="sales_data.csv", mime="text/csv")

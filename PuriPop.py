@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Configure the app page settings
-st.set_page_config(page_title="Surya's Pani Puri Shop", page_icon="🍲", layout="centered")
+st.set_page_config(page_title="Ganapathi's Kitchen Room", page_icon="🍲", layout="centered")
 
 # Define CSS for styling the app
 st.markdown("""

@@ -15,7 +15,7 @@ st.markdown(
             color: #333333;
         }
         .main {
-            padding: 1rem;
+            padding: rem;
         }
         
         /* Title Styling */
